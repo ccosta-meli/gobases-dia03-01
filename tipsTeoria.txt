@@ -1,0 +1,139 @@
+---------- PUNTEROS
+
+-- Crear punteros
+
+var p1 *int
+var p2 = new(int)
+p3 := &v
+
+-- Operador de direccion & -> obtener referencia o direccion de memoria de una variable
+
+var v int = 19
+fmt.Println("La direccion de memoria de v es: ", &v)
+
+-- Operador de desreferenciacion -> desreferenciar un puntero es obtener el valor que esta almacenado en la direccion de memoria
+
+var v int = 19
+var p *int
+
+// Hacemos que el puntero p referencie la direccion de memoria de la variable valor
+
+p = &v
+
+// v es 19
+// p es la direccion de memoria de 19
+// Si imprimo *p tengo 19, lo estoy desreferenciando
+
+---------- REPASO COMPOSICION
+
+type Autor struct {
+    Nombre string
+    Apellido string
+}
+
+func (a *Autor) nombreCompleto() string {
+    return fmt.Sprintf("%s %s", a.Nombre, a.Apellido)
+}
+
+type Libro struct {
+    Titulo string
+    Contenido string
+    Autor Autor
+}
+
+func (b *Libro) informacion() {
+    fmt.Println("Titulo: ", b.Titulo)
+    fmt.Println("Contenido: ", b.Contenido)
+    fmt.Println("Autor: ", b.Autor.nombreCompleto())
+}
+
+---------- INTERFACES
+Forma de definir metodos que deben ser utilizados pero sin definirlos
+Se utilizan para brindar modularidad al lenguaje
+
+-- Ejemplo
+
+type circle stuct {
+    radius float64
+}
+
+func (c circle) area() float64 {
+    return math.PI * c.radius * c.radius
+}
+
+func (c circle) perim() float64 {
+    return 2 * math.PI * c.radius
+}
+
+func details(c circle) {
+    fmt.Println(c)
+    fmt.Println(c.area())
+    fmt.Println(c.perim())
+}
+
+func main() {
+    c := circle{radius: 5}
+    details(c)
+}
+
+-- Que pasara si queremos generar mas figuras geometricas utilizando la funcion details() ?
+Aqui entran en juego las interfaces. Permiten implementar el mismo comportamiento a diferentes objetos.
+
+type geometry interface {
+    area() float64
+    perim() float64
+}
+
+type rect struct {
+    width, height float64
+}
+
+func (r rect) area() float64 {
+    return r.width * r.height
+}
+
+func (r rect) perim() float64 {
+    return 2*r.width + 2*r.height
+}
+
+// Modificamos la funcion details para que en lugar de recibir un circulo reciba una figura geometricas
+
+func details(g geometry) {
+     mt.Println(g)
+    fmt.Println(g.area())
+    fmt.Println(g.perim())
+}
+
+func main() {
+    r := rect{width: 3, height: 4}
+    c := circle{radius: 5}
+    details(r)
+    details(c)
+}
+
+---------- INTERFACES VACIAS
+Aquellas que no tienen metodos declarados, la utilidad es proveernos un tipo de datos "comodin", podemos almacenar valores
+que sean de un tipo de datos desconocido o que pueda variar dependiendo el flujo del programa
+
+-- Ejemplo
+
+type ListaHeterogenea struct {
+    Data []interface{}
+}
+
+func main() {
+    l := ListaHeterogenea{}
+    l.Data = append(l.Data, 1)
+    l.Data = append(l.Data, "hola)
+    l.Data = append(l.Data, true)
+}
+
+---------- TYPE ASSERTION
+Provee acceso al tipo de datos exacto que esta abstraido por una interfaz
+
+var i interface {} = "hello
+
+s := i.(string)
+s, ok := i.(string)
+f, ok := i.(float64)
+
